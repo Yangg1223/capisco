@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -19,15 +21,15 @@ import org.apache.lucene.store.FSDirectory;
 
 public class LuceneExtractor
 {
-	//final static String index = "/home/mjc62/masc_500k/masc_500k_index_capisco/";
-	//final static String output = "/home/mjc62/masc_500k/capiscoOutput/";
-	//final static String namefield = "path"; //path for Capisco
-	//final static String valuefield = "topics"; //value for Capisco
+	final static String index = "/home/mjc62/Benchmark2/indexes/capisco/";
+	final static String output = "/home/mjc62/Benchmark2/output/capisco/";
+	final static String namefield = "path"; //path for Capisco
+	final static String valuefield = "topics"; //value for Capisco
 	
-	final static String index = "/home/mjc62/masc_500k/masc_500k_index_solr/";
-	final static String output = "/home/mjc62/masc_500k/solrOutput/";
-	final static String namefield = "resourcename"; //resourcename for Solr
-	final static String valuefield = "_text_"; //value for Solr
+//	final static String index = "/home/mjc62/Benchmark2/indexes/solr/";
+//	final static String output = "/home/mjc62/Benchmark2/output/solr/";
+//	final static String namefield = "path"; //resourcename for Solr
+//	final static String valuefield = "topics"; //value for Solr
 	
 	public static void main(String args[]) throws Exception 
 	{
@@ -38,11 +40,11 @@ public class LuceneExtractor
     
 	public static void searching(IndexSearcher searcher) throws ParseException, IOException
 	{	
-		ArrayList<String> docNames = new ArrayList<String>();
+		HashSet<String> docNames = new HashSet<String>();
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(index).toPath()));
 		for (int i=0; i<reader.maxDoc(); i++) {
 		    Document doc = reader.document(i);
-		    docNames.add(doc.get(namefield));
+		    docNames.add(doc.get(namefield)); //TODO: make sure is unique - hashmap
 		}
 		
 		for(String docName : docNames){	
