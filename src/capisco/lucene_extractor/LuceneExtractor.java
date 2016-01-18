@@ -21,8 +21,8 @@ import org.apache.lucene.store.FSDirectory;
 
 public class LuceneExtractor
 {
-	final static String index = "/home/mjc62/Benchmark2/indexes/capisco/";
-	final static String output = "/home/mjc62/Benchmark2/output/capisco/";
+	final static String index = "/home/yg115/20160118/output2";
+	final static String output = "/home/yg115/20160118/outputc";
 	final static String namefield = "path"; //path for Capisco
 	final static String valuefield = "topics"; //value for Capisco
 	
@@ -50,7 +50,7 @@ public class LuceneExtractor
 		for(String docName : docNames){	
 			Term term = new Term(namefield, docName);
 			TermQuery tq = new TermQuery(term);		
-			TopDocs results = searcher.search(tq, 1000);
+			TopDocs results = searcher.search(tq, 200000);
 			ScoreDoc[] hits = results.scoreDocs;
 			String docTitle = docName.substring(docName.lastIndexOf("/")+1);
 			System.out.println(docTitle);
@@ -60,15 +60,18 @@ public class LuceneExtractor
 				docDir.mkdir();
 			}
 			
-			File writename = new File(output + docTitle); 
+			File writename = new File(output + "/" + docTitle); 
         	
         	BufferedWriter out = new BufferedWriter(new FileWriter(writename,true));
 			for (int i = 0; i < hits.length; ++i) 
 			{
 				Document doc = searcher.doc(hits[i].doc);
-				String[] resultConcepts = doc.getValues(valuefield);				 	
-				for(String concept : resultConcepts){					 
-            	out.write(concept + "\r\n");
+				String[] resultConcepts = doc.getValues(valuefield);	
+				String[] resultPageNum = doc.getValues("pageNum");
+				String[] resultFrequency = doc.getValues("count");
+ 				for(int j = 0; j < resultConcepts.length; ++j){
+ 					String s = String.format("%-50s\t\t%5s\t\t%5s\r\n", resultConcepts[j], resultPageNum[j], resultFrequency[j]);
+ 					out.write(s);
 				}							
 			}
 			out.close();
